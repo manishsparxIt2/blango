@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
-
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 class Tag(models.Model):
   value=models.TextField(max_length=100)
 
@@ -17,6 +18,15 @@ class Post(models.Model):
   summary=models.TextField(max_length=500)
   content=models.TextField()
   tags=models.ManyToManyField(Tag,related_name="posts")
+
+class Comment(models.Model):
+  creator= models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+  content= models.TextField()
+  post = models.ForeignKey(Post,on_delete=models.CASCADE)
+  content_type = models.ForeignKey(ContentType,  on_delete=models.CASCADE)
+  object_id = models.PositiveIntegerField(default=0)
+  content_object = GenericForeignKey("content_type","object_id")
+  #author =  models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
 
   def __str__(self):
     return slef.title
